@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE html>
+<ui:composition template="/WEB-INF/template/Layout.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="corpo">
+
+		<h:form id="frmNovoPedido">
+
+			<p:panel id="pnlCliente" header="Listagem de Pedidos"
+				style="margin-bottom:5px;">
+				<p:focus context="pnlCliente" />
+
+				<p:messages id="messages" autoUpdate="true" closable="true" />
+
+				<p:panelGrid columns="4" styleClass="semBorda">
+
+					<p:outputLabel value="Informe o CPF do Cliente: " />
+					<h:panelGroup>
+						<p:selectOneMenu id="selecionaClienteByCpf"
+							value="#{pedidoBean.cliente_id}" panelStyle="width:180px"
+							effect="fade" style="width:160px" filter="true"
+							valueChangeListener="#{pedidoBean.selecionarPedidosPorCliente}"
+							filterMatchMode="startsWith">
+							<f:selectItems value="#{pedidoBean.carregarClientesByCpf}"
+								var="cli2" size="30" />
+							<p:ajax update="@this, :frmPedidos:listagem_pedidos, :frmListagemItens:painelItensPedido"/>
+						</p:selectOneMenu>
+					</h:panelGroup>
+
+				</p:panelGrid>
+			</p:panel>
+
+		</h:form>
+
+		<h:form id="frmPedidos" acceptcharset="ISO-8859-1">
+
+			<p:panel id="painelPedidos" header="Pedidos"
+				style="margin-bottom:20px">
+
+				<p:contextMenu for="listagem_pedidos" widgetVar="cMenu">
+					<p:menuitem value="Edit Cell" icon="ui-icon-search"
+						onclick="PF('cellCliente').showCellEditor();return false;" />
+					<p:menuitem value="Hide Menu" icon="ui-icon-close"
+						onclick="PF('cMenu').hide()" />
+				</p:contextMenu>
+
+				<p:dataTable id="listagem_pedidos" value="#{pedidoBean.pedidos}"
+					var="pedido" draggableColumns="true" style="margin-bottom:0"
+					paginator="true" rows="5"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
+					selection="#{pedidoBean.pedidoSelecionado}" selectionMode="single"
+					rowKey="#{pedido.id}" editable="true" widgetVar="cellCliente"
+					editMode="cell" paginatorAlwaysVisible="true"
+					currentPageReportTemplate="{totalRecords} Pedidos Cadastrados"
+					emptyMessage="Nenhum pedido cadastrado.">
+
+					<p:ajax event="rowSelect" />
+
+					<p:column headerText="Número" filterBy="#{pedido.id}"
+						style="width:80px;">
+						<h:outputText value="#{pedido.id}" />
+					</p:column>
+
+					<p:column headerText="Data" filterBy="#{pedido.data}"
+						style="width:80px;">
+						<h:outputText value="#{pedido.data}">
+							<f:convertDateTime pattern="dd/MM/yyyy"
+								timeZone="America/Sao_Paulo" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Nome do Cliente">
+						<h:outputText value="#{pedido.cliente.nome}" />
+					</p:column>
+
+					<p:column headerText="Sobrenome do Cliente">
+						<h:outputText value="#{pedido.cliente.sobrenome}" />
+					</p:column>
+
+					<p:column headerText="" style="width:26px;">
+						<p:commandButton icon="ui-icon-search" style="width:25px;"
+							action="#{pedidoBean.visualizarItensPedido(pedido)}"
+							update=":frmListagemItens:painelItensPedido"
+							title="Visualizar Itens do Pedido">
+						</p:commandButton>
+					</p:column>
+
+
+				</p:dataTable>
+
+			</p:panel>
+
+		</h:form>
+
+		<h:form id="frmListagemItens">
+
+			<p:panel id="painelItensPedido" header="Itens do Pedido"
+				style="margin-bottom:20px">
+
+				<p:dataTable id="dtListagemItens" value="#{pedidoBean.listaItens}"
+					var="item" draggableColumns="true" style="margin-bottom:0"
+					paginator="true" rows="4"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="4,10,15" paginatorPosition="bottom"					
+					emptyMessage="Nenhum Item">
+
+
+					<p:column headerText="Produto">
+						<h:outputText value="#{item.produto.descricao}" />
+					</p:column>
+
+					<p:column headerText="Quantidade" style="width:26px">
+						<h:outputText value="#{item.qtdade}" />
+					</p:column>					
+
+				</p:dataTable>
+			</p:panel>
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>

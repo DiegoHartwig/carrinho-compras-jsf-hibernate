@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE html>
+<ui:composition template="/WEB-INF/template/Layout.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="corpo">
+
+		<h:form id="frmEditarProduto" acceptcharset="ISO-8859-1">
+		
+		<h:inputHidden value="#{produtoBean.produto.id}" id="hiddenId" />
+
+			<p:panel id="painelProduto" header="Atualizar Produto"
+				style="margin-bottom:20px">
+
+				<p:focus context="painelProduto" />
+
+				<p:messages id="messages" autoUpdate="true" closable="true" />
+
+				<p:panelGrid columns="1" styleClass="semBorda">
+
+					<p:outputLabel value="Descrição do Produto" for="descricao" />
+
+					<p:inputText id="descricao"
+						value="#{produtoBean.produto.descricao}"
+						placeholder="Informe a descrição" size="45" maxlength="45"
+						required="true" requiredMessage="Informe a descrição do produto!">
+						<f:validateLength minimum="2" maximum="45" />
+					</p:inputText>
+
+					<p:toolbar style="margin-top:5px;">
+						<p:toolbarGroup align="left">
+							<p:commandButton value="Salvar" icon="ui-icon-circle-check"
+								actionListener="#{produtoBean.updateProduto}" ajax="false"
+								action="produtos?faces-redirect=true" />
+
+							<p:commandButton value="Novo"
+								actionListener="#{produtoBean.novoProduto}" ajax="false"
+								action="produtos?faces-redirect=true" immediate="true"
+								icon="ui-icon-circle-plus" />
+						</p:toolbarGroup>
+					</p:toolbar>
+				</p:panelGrid>
+			</p:panel>
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>

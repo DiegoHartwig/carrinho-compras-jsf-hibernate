@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE html>
+<ui:composition template="/WEB-INF/template/Layout.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="corpo">
+
+		<h:form id="listarProdutos">
+
+			<p:panel id="painelProdutos" header="Produtos"
+				style="margin-bottom:20px">
+				
+				<p:messages id="messages" autoUpdate="true" closable="true" />
+
+				<p:toolbar style="margin-bottom:5px;">
+					<p:toolbarGroup align="left">
+						<p:commandButton value="Novo Produto"
+							actionListener="#{produtoBean.novoProduto}" ajax="false"
+							action="novo-produto" icon="ui-icon-circle-plus">
+						</p:commandButton>
+					</p:toolbarGroup>
+				</p:toolbar>
+
+				<p:contextMenu for="listagem_produtos" widgetVar="cMenu">
+					<p:menuitem value="Edit Cell" icon="ui-icon-search"
+						onclick="PF('cellProduto').showCellEditor();return false;" />
+					<p:menuitem value="Hide Menu" icon="ui-icon-close"
+						onclick="PF('cMenu').hide()" />
+				</p:contextMenu>
+
+				<p:dataTable id="listagem_produtos" value="#{produtoBean.produtos}"
+					var="p" draggableColumns="true" style="margin-bottom:0"
+					paginator="true" rows="10"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="10,15" paginatorPosition="bottom"
+					selection="#{produtoBean.produtoSelecionado}"
+					selectionMode="single" rowKey="#{p.id}" editable="true"
+					widgetVar="cellProduto" editMode="cell"
+					paginatorAlwaysVisible="true"
+					currentPageReportTemplate="{totalRecords} Produtos Cadastrados"
+					emptyMessage="Nenhum Produto cadastrado.">
+
+					<p:column headerText="" style="width:26px;">
+						<p:commandButton icon="ui-icon-pencil" action="editar-produto"
+							actionListener="#{produtoBean.selecionarProduto}"
+							style="width:25px;" title="Editar" />
+					</p:column>
+
+					<p:column headerText="" style="width:26px;">
+						<p:commandButton icon="ui-icon-trash"
+							actionListener="#{produtoBean.deleteProduto}"
+							update="listagem_produtos" title="Apagar" style="width:25px;">
+							<p:confirm header="Exclusão de Produto"
+								message="Deseja mesmo excluir este produto?"
+								icon="ui-icon-alert"></p:confirm>
+						</p:commandButton>
+					</p:column>
+
+					<p:column headerText="Código" style="width: 50px;">
+						<h:outputText value="#{p.id}" />
+					</p:column>
+
+					<p:column headerText="Descrição do Produto">
+						<h:outputText value="#{p.descricao}" />
+					</p:column>
+
+				</p:dataTable>
+
+				<p:confirmDialog global="true" showEffect="fade"
+					hideEffect="explode">
+					<p:commandButton value="SIM" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check"></p:commandButton>
+					<p:commandButton value="NÃO" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close"></p:commandButton>
+				</p:confirmDialog>
+
+			</p:panel>
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>

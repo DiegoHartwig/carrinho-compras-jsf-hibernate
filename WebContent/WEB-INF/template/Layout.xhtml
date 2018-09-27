@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:insert name="metadata" />
+
+<h:head>
+	<meta charset="UTF-8" />
+
+	<h:outputStylesheet library="assets" name="estilo.css" />
+</h:head>
+<h:body>
+
+	<header>
+		<h:graphicImage library="assets" name="logo.png" />		
+	</header>
+
+	<!-- begin menu -->
+	<h:form>
+		<p:menubar>
+			<p:menuitem value="Clientes" url="clientes.xhtml"
+				icon="	ui-icon-person" />
+			<p:menuitem value="Produtos" url="produtos.xhtml"
+				icon="ui-icon-lightbulb" />
+			<p:menuitem value="Efetuar Pedido" url="novo-pedido.xhtml"
+				icon="ui-icon-cart" />
+			<p:menuitem value="Listar Pedidos" url="pedidos.xhtml"
+				icon="ui-icon-suitcase" />
+		</p:menubar>
+	</h:form>
+	<!--end menu -->
+
+	<!-- Loading -->
+	<p:ajaxStatus onstart="PF('statusDialog').show()"
+		onsuccess="PF('statusDialog').hide()" />
+	<p:dialog widgetVar="statusDialog" modal="true" draggable="false"
+		closable="false" resizable="false" showHeader="false">
+		<p:graphicImage library="assets" name="loader.gif" />
+	</p:dialog>
+
+
+	<div id="conteudo">
+		<ui:insert name="corpo" />
+	</div>
+
+	<footer> Carrinho de Compras - Diego Hartwig -
+		hartwig.diego@gmail.com </footer>
+
+</h:body>
+</html>

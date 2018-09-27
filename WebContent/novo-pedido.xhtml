@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE html>
+<ui:composition template="/WEB-INF/template/Layout.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event listener="#{pedidoBean.ListarProdutosTelaPedido}"
+				type="preRenderView" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="corpo">
+
+		<h:form id="frmNovoPedido">
+
+			<p:panel id="pnlCliente" header="Novo Pedido"
+				style="margin-bottom:5px;">
+				<p:focus context="pnlCliente" />
+
+				<p:messages id="messages" autoUpdate="true" closable="true" />
+
+				<p:panelGrid columns="5" styleClass="semBorda">
+
+					<p:outputLabel value="Buscar Cliente pelo CPF: " />
+					<h:panelGroup>
+						<p:selectOneMenu id="selecionaClienteByCpf"
+							value="#{pedidoBean.cliente_id}" panelStyle="width:180px"
+							effect="fade" style="width:160px" filter="true"
+							filterMatchMode="startsWith" valueChangeListener="#{pedidoBean.selecionarCliente}">
+							<f:selectItems value="#{pedidoBean.carregarClientesByCpf}"
+								var="cli2" size="30" />
+							<p:ajax update="@this, pnlCliente"/>
+						</p:selectOneMenu>
+					</h:panelGroup>
+
+					<p:outputLabel value="Buscar cliente pelo Nome: " />
+					<h:panelGroup>
+						<p:selectOneMenu id="selecionaCliente"
+							value="#{pedidoBean.cliente_id}" panelStyle="width:180px"
+							effect="fade" style="width:160px" filter="true"
+							filterMatchMode="startsWith"
+							valueChangeListener="#{pedidoBean.selecionarCliente}"
+							>
+							<f:selectItems value="#{pedidoBean.carregarClientes}" var="cli"
+								size="30" />
+							<p:ajax update="@this, pnlCliente"/>
+						</p:selectOneMenu>
+					</h:panelGroup>
+					
+					<p:commandButton value="Criar Pedido"
+							actionListener="#{pedidoBean.novoPedido}" ajax="false"
+							icon="ui-icon-circle-plus">
+					</p:commandButton>
+
+				</p:panelGrid>
+				<p:panelGrid rendered="#{pedidoBean.cliente_id > 0}" columns="2" styleClass="semBorda">
+					<p:outputLabel value="Cliente selecionado: " />
+					<p:outputLabel value="#{pedidoBean.clienteSelecionado.nome} #{pedidoBean.clienteSelecionado.sobrenome}" />
+				</p:panelGrid>
+			</p:panel>
+
+		</h:form>
+
+		<h:form id="frmListarProdutos">
+
+			<p:contextMenu for="listagemProdutos" widgetVar="cMenu">
+				<p:menuitem value="Edit Cell" icon="ui-icon-search"
+					onclick="PF('cellProduto').showCellEditor();return false;" />
+				<p:menuitem value="Hide Menu" icon="ui-icon-close"
+					onclick="PF('cMenu').hide()" />
+			</p:contextMenu>
+
+			<p:panel id="pnlProdutos" header="Produtos em Estoque"
+				style="margin-bottom:5px;">
+
+				<p:dataTable id="listagemProdutos"
+					value="#{pedidoBean.listaProdutos}" var="produto"
+					draggableColumns="true" style="margin-bottom:0" paginator="true"
+					rows="4"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="4,10,15" paginatorPosition="bottom"
+					paginatorAlwaysVisible="true" selectionMode="single"
+					rowKey="#{produto.id}" editable="true"
+					selection="#{pedidoBean.produtoSelecionado}"
+					currentPageReportTemplate="{totalRecords} Produtos Cadastrados"
+					emptyMessage="Nenhum Produto cadastrado.">
+
+
+					<p:column headerText="Código" style="width: 50px;">
+						<h:outputText value="#{produto.id}" />
+					</p:column>
+
+					<p:column headerText="Descrição do Produto"
+						filterBy="#{produto.descricao}">
+						<h:outputText value="#{produto.descricao}" />
+					</p:column>
+					
+					<p:column style="text-align: center" headerText="Quantidade">
+						<p:inputText size="2" value="#{produto.quantidade}" onkeypress="if(event.which &lt; 48 || event.which &gt; 57) return false;"/>
+					</p:column>
+
+					<p:column headerText="" style="width:26px;">
+						<p:commandButton icon="ui-icon-cart" style="width:25px;"
+							title="Adicionar ao carrinho"
+							action="#{pedidoBean.adicionarItem(produto)}"
+							update=":frmListarProdutos:pnlItens">
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+
+			</p:panel>
+
+			<p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+				<p:commandButton value="SIM" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check"></p:commandButton>
+				<p:commandButton value="NÃO" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close"></p:commandButton>
+			</p:confirmDialog>
+
+			<p:separator />
+
+			<p:panel id="pnlItens" header="Itens do Pedido"
+				style="margin-bottom:5px;">
+
+				<p:contextMenu for="dtListagemItens" widgetVar="cMenu">
+					<p:menuitem value="Edit Cell" icon="ui-icon-search"
+						onclick="PF('cellItem').showCellEditor();return false;" />
+					<p:menuitem value="Hide Menu" icon="ui-icon-close"
+						onclick="PF('cMenu').hide()" />
+				</p:contextMenu>
+
+				<p:dataTable id="dtListagemItens" value="#{pedidoBean.listaItens}"
+					var="item" draggableColumns="true" style="margin-bottom:0"
+					paginator="true" rows="4"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="4,10,15" paginatorPosition="bottom"
+					currentPageReportTemplate="{totalRecords} Produtos Cadastrados"
+					emptyMessage="Nenhum Produto cadastrado.">
+
+
+					<p:column headerText="Produto">
+						<h:outputText value="#{item.produto.descricao}" />
+					</p:column>
+
+					<p:column headerText="Quantidade">
+						<h:outputText value="#{item.qtdade}" />
+					</p:column>
+
+					<p:column headerText="" style="width:26px;">
+						<p:commandButton icon="ui-icon-trash" style="width:25px;"
+							actionListener="#{pedidoBean.excluirItem(item)}"
+							update=":frmListarProdutos:pnlItens"
+							title="Remover" />
+					</p:column>
+
+				</p:dataTable>
+
+				<p:confirmDialog global="true" showEffect="fade"
+					hideEffect="explode">
+					<p:commandButton value="SIM" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check"></p:commandButton>
+					<p:commandButton value="NÃO" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close"></p:commandButton>
+				</p:confirmDialog>
+
+			</p:panel>
+		</h:form>
+
+	</ui:define>
+</ui:composition>

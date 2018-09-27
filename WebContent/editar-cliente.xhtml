@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE html>
+<ui:composition template="/WEB-INF/template/Layout.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="corpo">
+
+		<h:form id="frmNovoCliente" acceptcharset="ISO-8859-1">
+		
+		<h:inputHidden value="#{clienteBean.cliente.id}" id="hiddenId" />
+
+			<p:panel id="painelCliente" header="Atualizar Cliente"
+				style="margin-bottom:20px">
+
+				<p:focus context="painelCliente" />
+
+				<p:messages id="messages" autoUpdate="true" closable="true" />
+
+				<p:panelGrid columns="1" id="pnlCliente" styleClass="semBorda">
+
+					<p:outputLabel value="Nome" for="nome" />
+					<p:inputText id="nome" value="#{clienteBean.cliente.nome}"
+						placeholder="Informe o nome" size="30" maxlength="30"
+						required="true" requiredMessage="Digite o nome do cliente!">
+						<f:validateLength minimum="2" maximum="30" />
+					</p:inputText>
+
+					<p:outputLabel value="Sobrenome" for="sobrenome" />
+					<p:inputText id="sobrenome"
+						value="#{clienteBean.cliente.sobrenome}"
+						placeholder="Informe o sobrenome" size="50" maxlength="50"
+						required="true" requiredMessage="Digite o sobrenome do cliente!">
+						<f:validateLength minimum="2" maximum="50" />
+					</p:inputText>
+
+					<p:outputLabel value="Cpf" for="cpf" />
+					<p:inputText id="cpf" value="#{clienteBean.cliente.cpf}"
+						placeholder="Informe o cpf" size="15" maxlength="15"
+						required="true" requiredMessage="Digite o cpf do cliente!">
+						<f:validateLength minimum="10" maximum="15" />
+					</p:inputText>
+
+				</p:panelGrid>
+
+				<p:toolbar style="margin-top:5px;">
+					<p:toolbarGroup align="left">
+						<p:commandButton value="Salvar" icon="ui-icon-circle-check"
+							actionListener="#{clienteBean.updateCliente}" ajax="false"
+							action="clientes?faces-redirect=true" />
+
+						<p:commandButton value="Novo"
+							actionListener="#{clienteBean.novoCliente}" ajax="false"
+							action="clientes?faces-redirect=true" immediate="true"
+							icon="ui-icon-circle-plus">
+						</p:commandButton>
+
+					</p:toolbarGroup>
+				</p:toolbar>
+			</p:panel>
+
+		</h:form>
+
+	</ui:define>
+</ui:composition>
